@@ -10,8 +10,7 @@ export class RedisClient {
             this.redis = new Redis({
                 host: config.redisHost,
                 port: config.redisPort,
-                password: config.redisPassword,
-                tls: {}  // required, because serverless uses TLS
+                password: config.redisPassword
             });
             this.redis.ping().then(res => logger.info("Redis connected:" + res))
                  .catch(err => logger.error("Redis error:", err));

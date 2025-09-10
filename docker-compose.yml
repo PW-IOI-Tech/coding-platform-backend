@@ -1,24 +1,40 @@
 services:
-  worker-code-runner:
+  # Single image built once
+  worker:
+    image: worker
     build: .
-    command: ["node", "dist/workers/codeRunnerWorker.js"]
-    env_file:
-      - .env
-    deploy:
-      replicas: 2   # can scale dynamically
 
-  worker-db-ops:
-    build: .
-    command: ["node", "dist/workers/dbOperationWorker.js"]
     env_file:
       - .env
     deploy:
       replicas: 1
+    networks:
+      - coding-platform
+
+  worker-code-runner:
+    image: worker  # reuse the built image
+    command: ["node", "dist/workers/codeRunnerWorker.js"]
+    env_file:
+      - .env
+    networks:
+      - coding-platform
+
+  worker-db-ops:
+    image: worker
+    command: ["node", "dist/workers/dbOperationWorker.js"]
+    env_file:
+      - .env
+    networks:
+      - coding-platform
 
   worker-submission-runner:
-    build: .
+    image: worker
     command: ["node", "dist/workers/submissionRunnerWorker.js"]
     env_file:
       - .env
-    deploy:
-      replicas: 2
+    networks:
+      - coding-platform
+
+networks:
+  coding-platform:
+    external: true
